@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import fsSync from "node:fs";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import {
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -117,6 +118,7 @@ export async function createWaSocket(
     browser: ["moltbot", "cli", VERSION],
     syncFullHistory: false,
     markOnlineOnConnect: false,
+    agent: new HttpsProxyAgent("http://127.0.0.1:7890"), // 强行写死代理
   });
 
   sock.ev.on("creds.update", () => enqueueSaveCreds(authDir, saveCreds, sessionLogger));
