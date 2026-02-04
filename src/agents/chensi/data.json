@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "version": "2.0",
+    "total_questions": 50,
+    "last_updated": "2026-02-04",
+    "description": "晨思 APP 问题库 - 基于五维度人生 Loss 函数（健康、开心、工作、爱、时间）+ 幸福笔记思路"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "dimension": "健康",
+      "category": "成就类",
+      "depth": "medium",
+      "level_1": "昨天/今天你在健康上做了哪个小决定？（多睡 10 分钟、少吃一块糖、走了几步路）",
+      "level_2": "为什么当时会做这个决定？是刻意的还是自然而然的？",
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "习惯", "微决策"]
+    },
+    {
+      "id": 2,
+      "dimension": "健康",
+      "category": "觉察类",
+      "depth": "light",
+      "level_1": "昨天/今天你的身体有没有向你“发信号”？（累、痛、轻松、有力）",
+      "level_2": null,
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "身体觉察"]
+    },
+    {
+      "id": 3,
+      "dimension": "健康",
+      "category": "记录类",
+      "depth": "deep",
+      "level_1": "昨天/今天有几个小时是睡够了的？如果没有，你在用什么“换”睡眠？",
+      "level_2": "熬夜时你在做什么？真的值得用睡眠交换吗？",
+      "level_3": "今天/明天晚上，你想几点上床？",
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "睡眠", "时间权衡"]
+    },
+    {
+      "id": 4,
+      "dimension": "健康",
+      "category": "成就类",
+      "depth": "light",
+      "level_1": "昨天/今天你有没有刻意活动身体？（伸展、散步、爬楼梯、运动）",
+      "level_2": null,
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "运动"]
+    },
+    {
+      "id": 5,
+      "dimension": "健康",
+      "category": "小确幸类",
+      "depth": "light",
+      "level_1": "昨天/今天的饮食，有没有一餐是“好好吃”而不是“对付一口”的？",
+      "level_2": null,
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "饮食", "小确幸"]
+    },
+    {
+      "id": 6,
+      "dimension": "健康",
+      "category": "觉察类",
+      "depth": "medium",
+      "level_1": "昨天/今天有没有哪个瞬间，你意识到“我的身体状态影响了我的情绪/决策”？",
+      "level_2": "具体是什么时候？身体怎么了？你做了什么决定？",
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["健康", "身心连接", "觉察"]
+    },
+    {
+      "id": 9,
+      "dimension": "开心",
+      "category": "小确幸类",
+      "depth": "light",
+      "level_1": "昨天/今天让你心情微微变好的一个瞬间是什么？",
+      "level_2": null,
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["开心", "小确幸", "正向情绪"]
+    },
+    {
+      "id": 10,
+      "dimension": "开心",
+      "category": "小确幸类",
+      "depth": "light",
+      "level_1": "昨天/今天有没有哪一刻你觉得“好舒服”“好放松”？",
+      "level_2": null,
+      "level_3": null,
+      "suitable_for_morning": true,
+      "suitable_for_evening": true,
+      "tags": ["开心", "放松", "小确幸"]
+    }
+  ],
+  "usage_notes": {
+    "depth_explanation": {
+      "light": "1层问题 - 仅记录，不追问。适合纯粹的小确幸、简单事实记录。",
+      "medium": "2层问题 - 记录 + 简单共情/引导。适合大部分日常记录。",
+      "deep": "3层问题 - 记录 + 意义挖掘 + 未来引导。适合重要决策、长期主义话题。"
+    },
+    "selection_strategy": "优先推送用户最近 7 天内覆盖最少的维度问题，避免 14 天内重复。"
+  }
+}
