@@ -1,0 +1,200 @@
+page {
+  background-color: #f7f7f7;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 120rpx; /* 留出输入框位置 */
+}
+
+/* 问题卡片 */
+.question-card {
+  background: #fff;
+  margin: 30rpx;
+  padding: 40rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.dimension-tag {
+  display: inline-block;
+  background: #e6f7ff;
+  color: #007aff;
+  font-size: 24rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.question-text {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 聊天列表 */
+.chat-list {
+  flex: 1;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 30rpx;
+}
+
+.message-user {
+  justify-content: flex-end;
+}
+
+.message-ai {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 20rpx 30rpx;
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  line-height: 1.6;
+}
+
+.message-user .bubble {
+  background: #007aff;
+  color: #fff;
+  border-top-right-radius: 4rpx;
+}
+
+.message-ai .bubble {
+  background: #fff;
+  color: #333;
+  border-top-left-radius: 4rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+/* 输入区域 */
+.input-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20rpx 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.input-box {
+  flex: 1;
+  background: #f0f0f0;
+  height: 80rpx;
+  border-radius: 40rpx;
+  padding: 0 30rpx;
+  font-size: 28rpx;
+  margin-right: 20rpx;
+}
+
+.send-btn {
+  width: 120rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: #007aff;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  padding: 0;
+  margin: 0;
+}
+
+.send-btn[disabled] {
+  background: #ccc;
+}
+
+/* Loading 动画 */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx;
+}
+
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  background: #ccc;
+  border-radius: 50%;
+  margin: 0 6rpx;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* 金句卡片弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.insight-card {
+  width: 600rpx;
+  background: #fff;
+  border-radius: 30rpx;
+  padding: 60rpx 40rpx;
+  text-align: center;
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.card-emoji {
+  font-size: 80rpx;
+  margin-bottom: 30rpx;
+}
+
+.card-content {
+  font-size: 32rpx;
+  color: #333;
+  line-height: 1.8;
+  margin-bottom: 40rpx;
+  font-family: "Songti SC", serif; /* 尝试使用宋体增加禅意 */
+}
+
+.card-footer {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 50rpx;
+}
+
+.close-btn {
+  background: #007aff;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+}
+

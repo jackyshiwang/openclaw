@@ -1,0 +1,51 @@
+<view class="container">
+  <!-- 顶部：今日问题 -->
+  <view class="question-card" wx:if="{{dailyQuestion}}">
+    <view class="dimension-tag">{{dailyQuestion.dimension}}</view>
+    <view class="question-text">{{dailyQuestion.level_1}}</view>
+  </view>
+
+  <!-- 中间：对话列表 -->
+  <scroll-view scroll-y class="chat-list" scroll-into-view="{{toView}}">
+    <block wx:for="{{messages}}" wx:key="index">
+      <view class="message {{item.role === 'user' ? 'message-user' : 'message-ai'}}" id="msg-{{index}}">
+        <view class="bubble">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- Loading 状态 -->
+    <view class="loading" wx:if="{{isLoading}}">
+      <view class="dot"></view><view class="dot"></view><view class="dot"></view>
+    </view>
+
+    <!-- 底部占位 -->
+    <view id="bottom-anchor" style="height: 20rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部：输入区域 -->
+  <view class="input-area">
+    <input class="input-box"
+           placeholder="写下你的想法..."
+           value="{{inputValue}}"
+           bindinput="onInput"
+           bindconfirm="sendMessage"
+           confirm-type="send"
+    />
+    <button class="send-btn" bindtap="sendMessage" disabled="{{isLoading || !inputValue}}">发送</button>
+  </view>
+
+  <!-- 金句卡片弹窗 -->
+  <view class="modal-mask" wx:if="{{insightCard}}">
+    <view class="insight-card">
+      <view class="card-emoji">{{insightCard.emoji}}</view>
+      <view class="card-content">{{insightCard.content}}</view>
+      <view class="card-footer">
+        <text>晨思 · {{insightCard.dimension}}</text>
+      </view>
+      <button class="close-btn" bindtap="closeCard">收下这份洞察</button>
+    </view>
+  </view>
+</view>
+
