@@ -12,6 +12,21 @@ page {
   padding-bottom: 120rpx; /* 留出输入框位置 */
 }
 
+.header {
+  padding: 20rpx 30rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.history-btn {
+  font-size: 28rpx;
+  color: #666;
+  background: #fff;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
 /* 问题卡片 */
 .question-card {
   background: #fff;
@@ -172,17 +187,52 @@ page {
   to { transform: scale(1); opacity: 1; }
 }
 
-.card-emoji {
-  font-size: 80rpx;
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 30rpx;
 }
 
-.card-content {
-  font-size: 32rpx;
+.card-emoji {
+  font-size: 80rpx;
+  margin-bottom: 10rpx;
+}
+
+.card-emotion {
+  font-size: 24rpx;
+  color: #666;
+  background: #f0f0f0;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.card-quote {
+  font-size: 36rpx;
+  font-weight: bold;
   color: #333;
-  line-height: 1.8;
+  margin-bottom: 20rpx;
+  font-family: "Songti SC", serif;
+  line-height: 1.4;
+}
+
+.card-author {
+  font-size: 24rpx;
+  color: #999;
   margin-bottom: 40rpx;
-  font-family: "Songti SC", serif; /* 尝试使用宋体增加禅意 */
+  text-align: right;
+  width: 100%;
+}
+
+.card-summary {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 40rpx;
+  text-align: left;
+  background: #f9f9f9;
+  padding: 20rpx;
+  border-radius: 10rpx;
 }
 
 .card-footer {
@@ -196,5 +246,52 @@ page {
   color: #fff;
   border-radius: 40rpx;
   font-size: 30rpx;
+}
+
+/* 历史记录面板 */
+.history-panel {
+  width: 600rpx;
+  background: #fff;
+  border-radius: 30rpx;
+  padding: 40rpx;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.history-list {
+  flex: 1;
+  min-height: 300rpx;
+  max-height: 600rpx;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.history-date {
+  font-size: 30rpx;
+  color: #333;
+}
+
+.history-arrow {
+  color: #ccc;
+}
+
+.empty-history {
+  text-align: center;
+  color: #999;
+  margin-top: 100rpx;
 }
 

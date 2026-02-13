@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: chensi-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASS=${DB_PASS:-password}
+      - DB_NAME=momen_db
+      - TZ=Asia/Shanghai
+      # Add other necessary env vars here, e.g., OPENAI_API_KEY
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - db
+    networks:
+      - chensi-net
+
+  db:
+    image: mysql:8.0
+    container_name: chensi-db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS:-password}
+      - MYSQL_DATABASE=momen_db
+      - TZ=Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d # Optional: for seeding
+    networks:
+      - chensi-net
+    command: --default-authentication-plugin=mysql_native_password
+
+networks:
+  chensi-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+

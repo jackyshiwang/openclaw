@@ -1,0 +1,3 @@
+2026-02-05T13:22:17.6NZ mysqld_safe Logging to '/Users/jackyxie/mysql-data-clean/error.log'.
+2026-02-05T13:22:17.6NZ mysqld_safe Starting mysqld daemon with databases from /Users/jackyxie/mysql-data-clean
+2026-02-05T13:22:19.6NZ mysqld_safe mysqld from pid file /Users/jackyxie/mysql-data-clean/mysqld.pid ended

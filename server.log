@@ -1,4 +1,10 @@
-✅ 已加载 API 密钥配置
-🚀 启动晨思 API Server (Port 3000)...
-🚀 Chensi API Server running on port 3000
-[Chensi] Running agent for session: chensi-test-user-2026-02-04
+[DB Config] Connecting to momen_db at 127.0.0.1 as root
+✅ Database connected.
+✅ Database synced.
+🚀 Chensi API Server v2 running on port 3000
+[QuestionService] User 99999 dimension counts: { '健康': 0, '开心': 0, '工作': 0, '爱': 0, '时间': 0 }
+[QuestionService] Selected target dimension: 健康
+[MomenAIService] Running agent for session: api-test-1770306562037
+[QuestionService] User 99999 dimension counts: { '健康': 0, '开心': 0, '工作': 0, '爱': 0, '时间': 0 }
+[QuestionService] Selected target dimension: 健康
+[MomenAIService] Running agent for session: remote-verify-1770358727048

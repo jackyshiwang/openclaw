@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晨思 API 测试客户端</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .btn { padding: 8px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        .btn:hover { background: #0056b3; }
+        .btn-red { background: #dc3545; }
+        .btn-red:hover { background: #c82333; }
+        #chat-box { height: 300px; border: 1px solid #eee; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #f9f9f9; }
+        .msg { margin-bottom: 8px; padding: 8px; border-radius: 4px; }
+        .msg.user { background: #e3f2fd; text-align: right; }
+        .msg.ai { background: #fff; border: 1px solid #eee; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+        .goal-item { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <h1>晨思 (Chensi) API 测试</h1>
+
+    <div class="section">
+        <h3>1. 用户设置</h3>
+        <label>User ID: <input type="number" id="userId" value="1"></label>
+        <button class="btn" onclick="setUserId()">确认</button>
+    </div>
+
+    <div class="section">
+        <h3>2. 每日一问 (Daily Question)</h3>
+        <button class="btn" onclick="fetchQuestion()">获取今日问题</button>
+        <div id="question-display" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+
+    <div class="section">
+        <h3>3. 用户目标 (User Goals)</h3>
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="goal-input" placeholder="输入新目标 (如: 每天跑步5公里)" style="width: 60%;">
+            <select id="goal-category">
+                <option value="life">生活</option>
+                <option value="work">工作</option>
+            </select>
+            <button class="btn" onclick="addGoal()">添加目标</button>
+        </div>
+        <button class="btn" onclick="fetchGoals()">刷新目标列表</button>
+        <div id="goals-list" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="section">
+        <h3>4. 对话 (Chat) & 语音 (Voice)</h3>
+        <div id="chat-box"></div>
+
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="chat-input" placeholder="输入你的回答..." style="width: 70%; padding: 8px;">
+            <button class="btn" onclick="sendMessage()">发送文字</button>
+        </div>
+
+        <div style="border-top: 1px dashed #ccc; padding-top: 10px;">
+            <h4>语音测试</h4>
+            <button class="btn" onclick="playTextToSpeech()">🔊 播放最后一条回复 (TTS)</button>
+            <br><br>
+            <label>上传录音 (ASR): <input type="file" id="audio-file" accept="audio/*"></label>
+            <button class="btn" onclick="uploadAudio()">识别并发送</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>5. 情绪分析 (Emotion Analysis)</h3>
+        <textarea id="emotion-input" placeholder="输入一段话来分析情绪..." style="width: 100%; height: 60px;"></textarea>
+        <button class="btn" onclick="analyzeEmotion()" style="margin-top: 5px;">分析情绪</button>
+        <div id="emotion-result" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="section">
+        <h3>6. 历史记录 (History)</h3>
+        <button class="btn" onclick="fetchHistory()">获取云端备份</button>
+        <div id="history-display"></div>
+    </div>
+
+    <script>
+        let currentUserId = 1;
+        let currentQuestion = null;
+        let sessionId = 'session-' + Date.now();
+        let lastAiResponse = "";
+
+        function setUserId() {
+            currentUserId = document.getElementById('userId').value;
+            alert('User ID set to: ' + currentUserId);
+            fetchGoals(); // Refresh goals when user changes
+        }
+
+        async function fetchQuestion() {
+            try {
+                const res = await fetch(`/api/daily-question?userId=${currentUserId}`);
+                const data = await res.json();
+                if (res.ok) {
+                    currentQuestion = data;
+                    document.getElementById('question-display').innerText = `[${data.dimension}] ${data.content}`;
+                    addMessage('ai', `早安！${data.content}`);
+                    lastAiResponse = `早安！${data.content}`;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (e) {
+                alert('Network Error');
+            }
+        }
+
+        async function fetchGoals() {
+            try {
+                const res = await fetch(`/api/goals?userId=${currentUserId}`);
+                const goals = await res.json();
+                const list = document.getElementById('goals-list');
+                list.innerHTML = '';
+                goals.forEach(goal => {
+                    const div = document.createElement('div');
+                    div.className = 'goal-item';
+                    div.innerHTML = `
+                        <span>[${goal.category}] ${goal.content}</span>
+                        <button class="btn btn-red" onclick="deleteGoal(${goal.id})">删除</button>
+                    `;
+                    list.appendChild(div);
+                });
+            } catch (e) {
+                console.error('Failed to fetch goals');
+            }
+        }
+
+        async function addGoal() {
+            const content = document.getElementById('goal-input').value;
+            const category = document.getElementById('goal-category').value;
+            if (!content) return;
+
+            await fetch('/api/goals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUserId, content, category })
+            });
+            document.getElementById('goal-input').value = '';
+            fetchGoals();
+        }
+
+        async function deleteGoal(id) {
+            if (!confirm('确定删除?')) return;
+            await fetch(`/api/goals/${id}?userId=${currentUserId}`, { method: 'DELETE' });
+            fetchGoals();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage('user', text);
+            input.value = '';
+            await sendToAI(text);
+        }
+
+        async function sendToAI(text) {
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        message: text,
+                        questionContext: currentQuestion,
+                        sessionId: sessionId
+                    })
+                });
+                const data = await res.json();
+
+                if (data.response) {
+                    addMessage('ai', data.response);
+                    lastAiResponse = data.response;
+                }
+                if (data.insightCard) {
+                    addMessage('ai', '💡 生成了洞察卡片:\n' + JSON.stringify(data.insightCard, null, 2));
+                }
+            } catch (e) {
+                addMessage('ai', 'Error: ' + e.message);
+            }
+        }
+
+        function addMessage(role, text) {
+            const box = document.getElementById('chat-box');
+            const div = document.createElement('div');
+            div.className = `msg ${role}`;
+            div.innerText = text;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function playTextToSpeech() {
+            if (!lastAiResponse) {
+                alert('没有可播放的回复');
+                return;
+            }
+            try {
+                const res = await fetch('/api/voice/synthesize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: lastAiResponse })
+                });
+                const data = await res.json();
+                if (data.audioUrl) {
+                    const audio = new Audio(data.audioUrl);
+                    audio.play();
+                }
+            } catch (e) {
+                alert('TTS Failed');
+            }
+        }
+
+        async function uploadAudio() {
+            const fileInput = document.getElementById('audio-file');
+            if (!fileInput.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('audio', fileInput.files[0]);
+
+            try {
+                addMessage('user', '🎤 正在识别语音...');
+                const res = await fetch('/api/voice/transcribe', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.text) {
+                    addMessage('user', `🎤 识别结果: ${data.text}`);
+                    await sendToAI(data.text);
+                } else {
+                    alert('识别失败');
+                }
+            } catch (e) {
+                alert('ASR Failed');
+            }
+        }
+
+        async function analyzeEmotion() {
+            const text = document.getElementById('emotion-input').value;
+            if (!text) return;
+
+            try {
+                const res = await fetch('/api/emotion/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                const display = document.getElementById('emotion-result');
+                if (data.primary) {
+                    display.innerHTML = `
+                        <div style="background: #e8f5e9; padding: 10px; border-radius: 4px;">
+                            <strong>情绪:</strong> ${data.primary} (强度: ${data.intensity}/10)<br>
+                            <strong>关键词:</strong> ${data.keywords.join(', ')}<br>
+                            <strong>建议:</strong> ${data.suggestion}
+                        </div>
+                    `;
+                } else {
+                    display.innerText = '分析失败';
+                }
+            } catch (e) {
+                alert('Emotion Analysis Failed');
+            }
+        }
+
+        async function fetchHistory() {
+            try {
+                const res = await fetch(`/api/sync/download?userId=${currentUserId}`);
+                const data = await res.json();
+                const display = document.getElementById('history-display');
+                if (data.reflections) {
+                    display.innerHTML = `<pre>${JSON.stringify(data.reflections, null, 2)}</pre>`;
+                } else {
+                    display.innerText = 'No history found.';
+                }
+            } catch (e) {
+                alert('Error fetching history');
+            }
+        }
+    </script>
+</body>
+</html>
+

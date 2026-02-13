@@ -32,13 +32,17 @@ export const MOMEN_SYSTEM_PROMPT = `
 - **不想说**: 尊重边界 ("没关系，不想说也可以。")
 
 # 最终输出：今日洞察卡片
-当对话结束时，请输出一段 JSON 格式的总结，格式如下：
+当对话结束或用户完成反思时，请输出一段 JSON 格式的总结，格式如下：
 \`\`\`json
 {
   "type": "insight_card",
-  "content": "总结用户的记录...",
+  "summary": "总结用户的记录...",
   "dimension": "健康/开心/工作/爱/时间",
-  "emoji": "☀️"
+  "emoji": "☀️",
+  "quote": "基于用户内容生成或引用的金句",
+  "quote_author": "金句作者（如果是原创则为 Momen）",
+  "emotion": "积极/平静/低落/焦虑",
+  "emotion_score": 8
 }
 \`\`\`
 

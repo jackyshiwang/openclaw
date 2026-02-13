@@ -1,0 +1,42 @@
+<view class="container">
+  <!-- Filter Tabs -->
+  <view class="tabs">
+    <view class="tab {{filterTag === '' ? 'active' : ''}}" bindtap="setFilter" data-tag="">全部</view>
+    <view class="tab {{filterTag === 'Happiness' ? 'active' : ''}}" bindtap="setFilter" data-tag="Happiness">幸福笔记</view>
+    <view class="tab {{filterTag === 'Work' ? 'active' : ''}}" bindtap="setFilter" data-tag="Work">工作</view>
+  </view>
+
+  <!-- List -->
+  <scroll-view scroll-y class="list">
+    <block wx:for="{{reflections}}" wx:key="id">
+      <view class="card">
+        <view class="card-header">
+          <text class="date">{{item.date}}</text>
+          <text class="sync-status {{item.synced ? 'synced' : 'unsynced'}}">{{item.synced ? '已同步' : '未同步'}}</text>
+        </view>
+
+        <view class="card-content">
+          <!-- Display Insight Card Summary if available -->
+          <view wx:if="{{item.content.summary}}" class="summary">{{item.content.summary}}</view>
+          <view wx:else class="raw-content">{{item.content}}</view>
+
+          <!-- Display Quote if available -->
+          <view wx:if="{{item.content.quote}}" class="quote">"{{item.content.quote}}"</view>
+        </view>
+
+        <view class="card-footer">
+          <view class="tags">
+            <block wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">
+              <text class="tag">{{tag}}</text>
+            </block>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{reflections.length === 0}}" class="empty-state">
+      <text>暂无记录，开始你的第一次晨思吧~</text>
+    </view>
+  </scroll-view>
+</view>
+

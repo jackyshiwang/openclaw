@@ -1,0 +1,3 @@
+2026-02-05T08:59:59.6NZ mysqld_safe Logging to '/usr/local/mysql/data/xiejunjie02.err'.
+2026-02-05T08:59:59.6NZ mysqld_safe Starting mysqld daemon with databases from /usr/local/var/mysql
+2026-02-05T09:00:00.6NZ mysqld_safe mysqld from pid file /usr/local/mysql/data/xiejunjie02.pid ended

@@ -1,8 +1,6 @@
 const app = getApp()
-
-// 配置 API 地址 (本地开发时使用)
-// 真机调试需要局域网 IP，或者部署到云端
-const API_BASE = 'http://localhost:3000/api';
+const StorageManager = require('../../utils/storage-manager');
+const { request } = require('../../utils/request');
 
 Page({
   data: {
@@ -12,31 +10,76 @@ Page({
     isLoading: false,
     toView: '',
     insightCard: null,
-    userId: 'user-' + Math.floor(Math.random() * 10000) // 模拟用户ID
+    userId: 'user-' + Math.floor(Math.random() * 10000), // 模拟用户ID
+    showHistory: false,
+    historyList: []
   },
 
   onLoad() {
     this.fetchDailyQuestion();
+    // 尝试从本地存储恢复 userId，保持用户身份一致
+    const storedUserId = wx.getStorageSync('userId');
+    if (storedUserId) {
+      this.setData({ userId: storedUserId });
+    } else {
+      wx.setStorageSync('userId', this.data.userId);
+    }
+
+    // 尝试加载今日的历史记录
+    const reflections = StorageManager.getReflections();
+    const today = new Date().toISOString().split('T')[0];
+    const todayRecord = reflections.find(r => r.date === today);
+
+    if (todayRecord && todayRecord.content && todayRecord.content.messages) {
+      this.setData({
+        messages: todayRecord.content.messages,
+        insightCard: todayRecord.content.insightCard || null
+      });
+      // 滚动到底部
+      this.setData({
+        toView: `msg-${todayRecord.content.messages.length - 1}`
+      });
+    }
+  },
+
+  // 获取历史记录
+  fetchHistory() {
+    request({
+      url: `/api/history?userId=${this.data.userId}`,
+      method: 'GET'
+    }).then(data => {
+      this.setData({
+        historyList: data,
+        showHistory: true
+      });
+    }).catch(err => {
+      console.error('获取历史记录失败', err);
+    });
+  },
+
+  // 切换历史记录显示
+  toggleHistory() {
+    if (!this.data.showHistory) {
+      this.fetchHistory();
+    } else {
+      this.setData({ showHistory: false });
+    }
   },
 
   // 获取今日问题
   fetchDailyQuestion() {
-    wx.request({
-      url: `${API_BASE}/daily-question`,
-      method: 'GET',
-      success: (res) => {
-        if (res.statusCode === 200) {
-          this.setData({
-            dailyQuestion: res.data
-          });
-          // 添加 AI 开场白
-          this.addMessage('ai', `早安！${res.data.level_1}`);
-        }
-      },
-      fail: (err) => {
-        console.error('获取问题失败', err);
-        wx.showToast({ title: '网络连接失败', icon: 'none' });
-      }
+    request({
+      url: '/api/daily-question',
+      method: 'GET'
+    }).then(data => {
+      this.setData({
+        dailyQuestion: data
+      });
+      // 添加 AI 开场白
+      this.addMessage('ai', `早安！${data.level_1}`);
+    }).catch(err => {
+      console.error('获取问题失败', err);
+      wx.showToast({ title: '网络连接失败', icon: 'none' });
     });
   },
 
@@ -57,38 +100,39 @@ Page({
     this.setData({ inputValue: '', isLoading: true });
 
     // 2. 调用后端 API
-    wx.request({
-      url: `${API_BASE}/chat`,
+    request({
+      url: '/api/chat',
       method: 'POST',
       data: {
         userId: this.data.userId,
         message: content,
         questionContext: this.data.dailyQuestion
-      },
-      success: (res) => {
-        if (res.statusCode === 200) {
-          const { reply, insightCard } = res.data;
-
-          // 添加 AI 回复
-          if (reply) {
-            this.addMessage('ai', reply);
-          }
-
-          // 如果有金句卡片，显示弹窗
-          if (insightCard) {
-            this.setData({ insightCard });
-          }
-        } else {
-          wx.showToast({ title: 'AI 响应异常', icon: 'none' });
-        }
-      },
-      fail: (err) => {
-        console.error('发送失败', err);
-        wx.showToast({ title: '网络错误', icon: 'none' });
-      },
-      complete: () => {
-        this.setData({ isLoading: false });
       }
+    }).then(data => {
+      const { reply, insightCard } = data;
+
+      // 添加 AI 回复
+      if (reply) {
+        this.addMessage('ai', reply);
+      }
+
+      // 如果有金句卡片，显示弹窗
+      if (insightCard) {
+        this.setData({ insightCard });
+      }
+
+      // Local-First: 保存对话记录到本地存储
+      const content = {
+        messages: this.data.messages,
+        insightCard: insightCard || this.data.insightCard,
+        question: this.data.dailyQuestion
+      };
+      StorageManager.saveOrUpdateToday(content, ['Daily']);
+    }).catch(err => {
+      console.error('发送失败', err);
+      wx.showToast({ title: '网络错误', icon: 'none' });
+    }).finally(() => {
+      this.setData({ isLoading: false });
     });
   },
 

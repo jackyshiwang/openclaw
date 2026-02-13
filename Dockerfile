@@ -1,40 +1,32 @@
-FROM node:22-bookworm
+# Use Node.js 18 Alpine as requested
+FROM node:18-alpine
 
-# Install Bun (required for build scripts)
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:${PATH}"
-
-RUN corepack enable
-
+# Set working directory
 WORKDIR /app
 
-ARG CLAWDBOT_DOCKER_APT_PACKAGES=""
-RUN if [ -n "$CLAWDBOT_DOCKER_APT_PACKAGES" ]; then \
-      apt-get update && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $CLAWDBOT_DOCKER_APT_PACKAGES && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
-    fi
+# Install pnpm
+RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY ui/package.json ./ui/package.json
-COPY patches ./patches
-COPY scripts ./scripts
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
 
-RUN pnpm install --frozen-lockfile
+# Install dependencies (including devDependencies for build)
+RUN pnpm install
 
+# Copy source code
 COPY . .
-RUN CLAWDBOT_A2UI_SKIP_MISSING=1 pnpm build
-# Force pnpm for UI build (Bun may fail on ARM/Synology architectures)
-ENV CLAWDBOT_PREFER_PNPM=1
-RUN pnpm ui:install
-RUN pnpm ui:build
 
+# Build the project
+RUN pnpm build
+
+# Prune dev dependencies to keep image small (optional but good practice)
+# RUN pnpm prune --prod
+
+# Set environment variable
 ENV NODE_ENV=production
 
-# Security hardening: Run as non-root user
-# The node:22-bookworm image includes a 'node' user (uid 1000)
-# This reduces the attack surface by preventing container escape via root privileges
-USER node
+# Expose port
+EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+# Start command
+CMD ["node", "dist/server/chensi-api.js"]
